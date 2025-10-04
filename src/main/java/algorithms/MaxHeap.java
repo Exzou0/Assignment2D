@@ -3,62 +3,47 @@ package algorithms;
 import metrics.PerformanceTracker;
 import java.util.NoSuchElementException;
 
-public class MaxHeap<T extends Comparable<? super T>> {
-    private Object[] heap;
+public class MaxHeap {
+    private int[] heap;
     private int size;
     private final PerformanceTracker tracker;
 
     public MaxHeap(int capacity, PerformanceTracker tracker) {
-        this.heap = new Object[Math.max(1, capacity)];
+        heap = new int[Math.max(1, capacity)];
         this.tracker = tracker == null ? new PerformanceTracker() : tracker;
     }
+
     public MaxHeap() { this(16, new PerformanceTracker()); }
 
-    public int size() { return size; }
-    public boolean isEmpty() { return size == 0; }
-
-    private void ensureCapacity() {
-        if (size == heap.length) {
-            Object[] newHeap = new Object[heap.length * 2];
-            System.arraycopy(heap, 0, newHeap, 0, heap.length);
-            tracker.addArrayAccess(heap.length * 2);
-            heap = newHeap;
-        }
-    }
-
-    public void insert(T value) {
-        if (value == null) throw new IllegalArgumentException("null not allowed");
+    public void insert(int v) {
         ensureCapacity();
-        heap[size] = value;
+        heap[size] = v;
         tracker.addArrayAccess(1);
         siftUp(size++);
     }
 
-    public T peekMax() {
-        if (isEmpty()) throw new NoSuchElementException();
+    public int peekMax() {
+        if (size == 0) throw new NoSuchElementException();
         tracker.addArrayAccess(1);
-        return (T) heap[0];
+        return heap[0];
     }
 
-    public T extractMax() {
-        if (isEmpty()) throw new NoSuchElementException();
-        T max = (T) heap[0];
+    public int extractMax() {
+        if (size == 0) throw new NoSuchElementException();
+        int m = heap[0];
         heap[0] = heap[--size];
-        heap[size] = null;
+        heap[size] = 0;
         tracker.addArrayAccess(3);
-        if (!isEmpty()) siftDown(0);
-        return max;
+        if (size > 0) siftDown(0);
+        return m;
     }
 
-    public void increaseKey(int index, T newValue) {
-        if (index < 0 || index >= size) throw new IndexOutOfBoundsException();
+    public void increaseKey(int i, int nv) {
+        if (i < 0 || i >= size) throw new IndexOutOfBoundsException();
+        if (nv < heap[i]) throw new IllegalArgumentException();
+        heap[i] = nv;
         tracker.addArrayAccess(1);
-        T cur = (T) heap[index];
-        tracker.incrementComparisons(1);
-        if (newValue.compareTo(cur) < 0) throw new IllegalArgumentException("new key smaller");
-        heap[index] = newValue;
-        tracker.addArrayAccess(1);
-        siftUp(index);
+        siftUp(i);
     }
 
     private void siftUp(int i) {
@@ -66,31 +51,30 @@ public class MaxHeap<T extends Comparable<? super T>> {
             int p = (i - 1) / 2;
             tracker.incrementComparisons(1);
             tracker.addArrayAccess(2);
-            if (((T)heap[i]).compareTo((T)heap[p]) > 0) {
-                swap(i, p);
-                i = p;
-            } else break;
+            if (heap[i] > heap[p]) { swap(i, p); i = p; } else break;
         }
     }
 
     private void siftDown(int i) {
         while (true) {
-            int l = 2 * i + 1, r = l + 1, largest = i;
-            if (l < size && greater(l, largest)) largest = l;
-            if (r < size && greater(r, largest)) largest = r;
-            if (largest != i) { swap(i, largest); i = largest; }
-            else break;
+            int l = 2 * i + 1, r = 2 * i + 2, g = i;
+            if (l < size && heap[l] > heap[g]) g = l;
+            if (r < size && heap[r] > heap[g]) g = r;
+            if (g != i) { swap(i, g); i = g; } else break;
         }
     }
 
-    private boolean greater(int i, int j) {
-        tracker.incrementComparisons(1);
-        tracker.addArrayAccess(2);
-        return ((T)heap[i]).compareTo((T)heap[j]) > 0;
+    private void swap(int i, int j) {
+        int t = heap[i]; heap[i] = heap[j]; heap[j] = t;
+        tracker.incrementSwaps(1); tracker.addArrayAccess(4);
     }
 
-    private void swap(int i, int j) {
-        Object t = heap[i]; heap[i] = heap[j]; heap[j] = t;
-        tracker.incrementSwaps(1); tracker.addArrayAccess(4);
+    private void ensureCapacity() {
+        if (size == heap.length) {
+            int[] n = new int[heap.length * 2];
+            System.arraycopy(heap, 0, n, 0, heap.length);
+            tracker.addArrayAccess(heap.length * 2);
+            heap = n;
+        }
     }
 }
