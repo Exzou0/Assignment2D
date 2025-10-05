@@ -10,7 +10,7 @@ public class MaxHeapTest {
     @Test
     public void testInsertExtract() {
         Integer[] input = {5, 1, 9, 3, 7};
-        MaxHeap<Integer> heap = new MaxHeap<>();
+        MaxHeap heap = new MaxHeap();
         for (int v : input) heap.insert(v);
 
         Arrays.sort(input, Collections.reverseOrder());
@@ -21,7 +21,7 @@ public class MaxHeapTest {
 
     @Test
     public void testIncreaseKey() {
-        MaxHeap<Integer> heap = new MaxHeap<>();
+        MaxHeap heap = new MaxHeap();
         heap.insert(1);
         heap.insert(2);
         heap.insert(3);
@@ -32,7 +32,7 @@ public class MaxHeapTest {
 
     @Test
     public void testEdgeCases() {
-        MaxHeap<Integer> heap = new MaxHeap<>();
+        MaxHeap heap = new MaxHeap();
         assertThrows(Exception.class, heap::peekMax);
         assertThrows(Exception.class, heap::extractMax);
     }
