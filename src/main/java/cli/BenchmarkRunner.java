@@ -5,6 +5,7 @@ import metrics.PerformanceTracker;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 public class BenchmarkRunner {
@@ -27,8 +28,11 @@ public class BenchmarkRunner {
                 long insertTime = System.nanoTime() - startInsert;
 
                 long startExtract = System.nanoTime();
-                while (!heap.isEmpty()) {
-                    heap.extractMax();
+                try {
+                    while (true) {
+                        heap.extractMax();
+                    }
+                } catch (NoSuchElementException e) {
                 }
                 long extractTime = System.nanoTime() - startExtract;
 
