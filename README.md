@@ -66,3 +66,12 @@ CSV format:
 ```
 timestamp,n,insertNs,extractNs,comparisons,swaps,arrayAccesses
 ```
+## Performance Evaluation
+
+Performance of MaxHeap operations was measured for various input sizes.  
+Results are stored in `docs/performance-plots/maxheap-results.csv` and visualized as plots:
+
+Time vs input size ![Time](docs/performance-plots/maxheap_time_fixed.png)
+Operations count (comparisons, swaps, allocations) ![Count](docs/performance-plots/maxheap_operations_fixed.png)
+
+---
